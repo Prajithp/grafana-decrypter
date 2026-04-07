@@ -120,11 +120,34 @@ get_dek_hex() {
 }
 
 # ---------------------------------------------------------------------------
-# Build the Go decrypter (once)
+# Locate the pre-built decrypter binary for the current OS/arch
 # ---------------------------------------------------------------------------
-DECRYPTER="$REPO_ROOT/tools/secretdecrypt/secretdecrypt"
-echo "Building decrypter..." >&2
-(cd "$REPO_ROOT" && go build -o "$DECRYPTER" ./tools/secretdecrypt/)
+DIST_DIR="$SCRIPT_DIR/dist"
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')    # linux, darwin
+ARCH=$(uname -m)                                 # x86_64, aarch64, arm64
+
+case "$ARCH" in
+    x86_64|amd64)  ARCH="amd64" ;;
+    aarch64|arm64) ARCH="arm64" ;;
+    *) echo "error: unsupported architecture '$ARCH'" >&2; exit 1 ;;
+esac
+
+SUFFIX=""
+if [[ "$OS" == "windows"* || "$OS" == "mingw"* || "$OS" == "msys"* ]]; then
+    OS="windows"
+    SUFFIX=".exe"
+fi
+
+DECRYPTER="$DIST_DIR/secretdecrypt-${OS}-${ARCH}${SUFFIX}"
+
+if [[ ! -x "$DECRYPTER" ]]; then
+    echo "Pre-built binary not found at $DECRYPTER" >&2
+    echo "Falling back to 'go build'..." >&2
+    DECRYPTER="$SCRIPT_DIR/secretdecrypt"
+    (cd "$REPO_ROOT" && go build -o "$DECRYPTER" ./tools/secretdecrypt/)
+else
+    echo "Using pre-built binary: $DECRYPTER" >&2
+fi
 
 # ---------------------------------------------------------------------------
 # Cache for data key lookups: key_id -> dek_hex
