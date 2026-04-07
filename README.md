@@ -99,7 +99,7 @@ error: envelope encryption detected -- you must supply -encrypted-dek
 
 ```sql
 -- MySQL
-SELECT HEX(encrypted_data) FROM data_keys WHERE id = 'F54a5DuVk';
+SELECT HEX(encrypted_data) FROM data_keys WHERE name = 'F54a5DuVk';
 
 -- PostgreSQL
 SELECT encode(encrypted_data, 'hex') FROM data_keys WHERE id = 'F54a5DuVk';

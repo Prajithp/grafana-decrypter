@@ -67,7 +67,7 @@ if [[ -z "$SECRET_KEY" ]]; then
     usage
 fi
 
-for cmd in jq go; do
+for cmd in jq; do
     if ! command -v "$cmd" &>/dev/null; then
         echo "error: '$cmd' is required but not found in PATH" >&2
         exit 1
@@ -107,13 +107,13 @@ get_dek_hex() {
     local query
     case "$DB_TYPE" in
         mysql)
-            query="SELECT HEX(encrypted_data) FROM data_keys WHERE id = '${key_id}';"
+            query="SELECT HEX(encrypted_data) FROM data_keys WHERE name = '${key_id}';"
             ;;
         postgres)
-            query="SELECT encode(encrypted_data, 'hex') FROM data_keys WHERE id = '${key_id}';"
+            query="SELECT encode(encrypted_data, 'hex') FROM data_keys WHERE name = '${key_id}';"
             ;;
         sqlite)
-            query="SELECT hex(encrypted_data) FROM data_keys WHERE id = '${key_id}';"
+            query="SELECT hex(encrypted_data) FROM data_keys WHERE name = '${key_id}';"
             ;;
     esac
     run_query "$query" | tr -d '[:space:]'
