@@ -102,10 +102,10 @@ error: envelope encryption detected -- you must supply -encrypted-dek
 SELECT HEX(encrypted_data) FROM data_keys WHERE name = 'F54a5DuVk';
 
 -- PostgreSQL
-SELECT encode(encrypted_data, 'hex') FROM data_keys WHERE id = 'F54a5DuVk';
+SELECT encode(encrypted_data, 'hex') FROM data_keys WHERE name = 'F54a5DuVk';
 
 -- SQLite
-SELECT hex(encrypted_data) FROM data_keys WHERE id = 'F54a5DuVk';
+SELECT hex(encrypted_data) FROM data_keys WHERE name = 'F54a5DuVk';
 ```
 
 **Step 4: Decrypt**
